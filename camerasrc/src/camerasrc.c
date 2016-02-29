@@ -85,11 +85,6 @@
 #define FIMC_IS_VIDEO_SCC_NUM	34
 #define FIMC_IS_VIDEO_SCP_NUM	37
 
-/* struct camera2_internal_udm */
-#define FIMC_IS_ISP_VS2_INIT	0x003F8CE4
-#define FIMC_IS_ISP_VS2_STEP	0x8350
-#define FIMC_IS_ISP_VS2_RANGE	40
-
 /* Magic Number */
 #define METADATA_MAGIC_NUMBER	0x23456789
 
@@ -3680,21 +3675,14 @@ static int _camerasrc_set_shot_meta(camerasrc_handle_t *p, unsigned int grpid, i
 		shot_ext->node_group.capture[1].output.cropRegion[3] = p->format_scp.img_size.height;
 
 		/*
-		 * This is first set of mysterious data :
-		 * if not set firmware reposrt lack of user-defined
-		 * dynamic meta.
-		 * Fisrt netry needs to be non-zero - if it's not
-		 * errors for SCC/SCP/DIS are being reported
-		 * (no target address) so this needs to be somehow
-		 * related to those (I think).
-		 * Same rule (first item non-zero) applies to vendorspecific2
+		 * If these fields are not set firmware reports lack of user-defined
+		 * dynamic metadata. The first entry of vendorSpecific1 array cannot
+		 * be zero - if it is errors for SCC/SCP/DIS are being reported
+		 * (no target address).
+		 * vendorSpecific2[0] should be zero, it will be set by the driver.
 		 */
 		shot_ext->shot.udm.internal.vendorSpecific1[0] = (uint32_t)~0U;
 		shot_ext->shot.udm.internal.vendorSpecific1[1] = 0x000B0C00;
-		if (fcount >= 0) {
-			shot_ext->shot.udm.internal.vendorSpecific2[0] = (FIMC_IS_ISP_VS2_INIT +
-			                                                  ((fcount - 1) % FIMC_IS_ISP_VS2_RANGE) * FIMC_IS_ISP_VS2_STEP);
-		}
 
 		shot_ext->shot.udm.bayer.width = 2560;
 		shot_ext->shot.udm.bayer.height = 1440;
