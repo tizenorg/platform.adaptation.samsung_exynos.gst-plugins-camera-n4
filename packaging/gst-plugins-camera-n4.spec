@@ -1,11 +1,14 @@
 Name:       gst-plugins-camera-n4
 Summary:    GStreamer codec plugins package for N4
 Version:    0.0.1
-Release:    0
+Release:    1
 Group:      Multimedia/Framework
 License:    LGPL-2.1+ and Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 ExclusiveArch:  %arm aarch64
+%if "%_repository" != "arm-wayland" && "%_repository" != "arm64-wayland"
+ExcludeArch:    %arm aarch64
+%endif
 BuildRequires:  pkgconfig(gstreamer-plugins-base-1.0)
 BuildRequires:  pkgconfig(mm-common)
 BuildRequires:  pkgconfig(mmutil-jpeg)
